@@ -44,13 +44,14 @@ fn verbose(s: &str) {
 
 fn load_config(fname: &str) -> Config {
     let content = fs::read_to_string(fname).expect("Error");
+    println!("{:?}", content);
     let cfg: Config = toml::from_str(&content).unwrap();
     cfg
 }
 
 fn main() {
     let opt = Opt::from_args();
-    let cfg = load_config("");
+    let cfg = load_config("src/config.toml");
 
     verbose("Hello world");
     println!("{:?}", opt);
