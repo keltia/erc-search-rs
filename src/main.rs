@@ -1,3 +1,5 @@
+use std::fs;
+
 //use toml::Value;
 use serde::Deserialize;
 use structopt::StructOpt;
@@ -40,14 +42,15 @@ fn verbose(s: &str) {
     println!("{}", s);
 }
 
-fn load_config() -> Config {
-    let cfg: Config = toml::from_str("").unwrap();
+fn load_config(fname: &str) -> Config {
+    let content = fs::read_to_string(fname).expect("Error");
+    let cfg: Config = toml::from_str(&content).unwrap();
     cfg
 }
 
 fn main() {
     let opt = Opt::from_args();
-    let cfg = load_config();
+    let cfg = load_config("");
 
     verbose("Hello world");
     println!("{:?}", opt);
