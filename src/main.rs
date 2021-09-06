@@ -45,10 +45,11 @@ fn verbose(s: &str) {
 }
 
 fn load_config(fname: &str) -> Config {
-    let content = fs::read_to_string(fname).expect("Error");
+    let content = fs::read_to_string(fname).unwrap();
+
     println!("{:?}", content);
-    let cfg: Config = toml::from_str(&content).unwrap();
-    cfg
+
+    return toml::from_str(&content).unwrap();
 }
 
 fn main() {
@@ -57,9 +58,7 @@ fn main() {
 
     verbose("Hello world");
     println!("{:?}", opt);
-    println!("{:?}", cfg);
+    println!("{:?}", cfg.sources);
 
-    if opt.verbose {
-        println!("Mode verbeux engagé")
-    }
+    verbose("Mode verbeux engagé");
 }
