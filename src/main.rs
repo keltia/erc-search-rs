@@ -45,11 +45,25 @@ fn verbose(s: &str) {
 }
 
 fn load_config(fname: &str) -> Config {
-    let content = fs::read_to_string(fname).unwrap();
+    let nul = Config {
+        verbose: Option::None,
+        sources: Option::None,
+    };
+
+    let content = fs::read_to_string(fname);
 
     println!("{:?}", content);
 
-    return toml::from_str(&content).unwrap();
+    let content = match content {
+        Ok(content) => content,
+        Err(_) => return nul,
+    };
+
+    let cfg = toml::from_str(&content);
+    match cfg {
+        Ok(cfg) => cfg,
+        Err(_) => return nul,
+    }
 }
 
 fn main() {
