@@ -3,6 +3,7 @@ use std::fs;
 //use toml::Value;
 use serde::Deserialize;
 use structopt::StructOpt;
+use toml::value::Table;
 
 //use serde_derive::Deserialize;
 
@@ -35,7 +36,8 @@ struct Source {
 
 #[derive(Debug, Deserialize)]
 struct Config {
-    sources: Option<Vec<Source>>,
+    verbose: Option<bool>,
+    sources: Option<Table>,
 }
 
 fn verbose(s: &str) {
