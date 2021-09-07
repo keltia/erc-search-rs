@@ -96,7 +96,6 @@ fn load_config(fname: &str) -> Config {
         Ok(content) => content,
         Err(_) => return nul,
     };
-
     let cfg = toml::from_str(&content);
     match cfg {
         Ok(cfg) => cfg,
