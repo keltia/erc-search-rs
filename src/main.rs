@@ -15,22 +15,22 @@ use toml::value::Table;
 struct Opt {
     /// configuration file
     #[clap(short = 'c', long)]
-    config: String,
+    config: Option<String>,
     /// debug mode
     #[clap(short = 'D', long = "debug")]
-    debug: bool,
+    debug: Option<bool>,
     /// Include mail search
     #[clap(short = 'M', long = "incl-mail")]
-    incl_mail: bool,
+    incl_mail: Option<bool>,
     /// Verbose mode
     #[clap(short = 'v', long)]
     verbose: bool,
     /// Display version and exit
     #[clap(short = 'V', long = "version")]
-    version: bool,
+    version: Option<bool>,
     /// Search for workstation
     #[clap(short, long = "workstation")]
-    workstation: bool,
+    workstation: Option<bool>,
     /// string to search for
     what: String,
 }
