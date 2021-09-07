@@ -86,6 +86,7 @@ fn verbose(s: &str) {
     println!("{}", s);
 }
 
+// That way, we do not panic whatever happens and return an empty Config.
 fn load_config(fname: &str) -> Config {
     let nul = Config::new();
     let content = fs::read_to_string(fname);
