@@ -1,26 +1,37 @@
 use std::fs;
 
 //use toml::Value;
+use clap::{AppSettings, Clap};
 use serde::Deserialize;
-use structopt::StructOpt;
 use toml::value::Table;
 
 //use serde_derive::Deserialize;
 
-#[derive(Debug, StructOpt)]
-#[structopt(name = "erc-search", about = "Search internal LDAP/AD.")]
+/// Help message
+#[derive(Debug, Clap)]
+#[clap(name = "erc-search", about = "Search internal LDAP/AD.")]
+#[clap(version = "0.1.1")]
+#[clap(setting = AppSettings::ColoredHelp)]
 struct Opt {
-    #[structopt(short = "D", help = "debug mode")]
+    /// configuration file
+    #[clap(short = 'c', long)]
+    config: String,
+    /// debug mode
+    #[clap(short = 'D', long = "debug")]
     debug: bool,
-    #[structopt(short = "M", help = "Include mail search")]
+    /// Include mail search
+    #[clap(short = 'M', long = "incl-mail")]
     incl_mail: bool,
-    #[structopt(short = "v", help = "Verbose mode")]
+    /// Verbose mode
+    #[clap(short = 'v', long)]
     verbose: bool,
-    #[structopt(short = "V", long, help = "Display version and exit")]
+    /// Display version and exit
+    #[clap(short = 'V', long = "version")]
     version: bool,
-    #[structopt(short, help = "Search for workstation")]
+    /// Search for workstation
+    #[clap(short, long = "workstation")]
     workstation: bool,
-    #[structopt(help = "string to search for")]
+    /// string to search for
     what: String,
 }
 
@@ -40,16 +51,43 @@ struct Config {
     sources: Option<Table>,
 }
 
+impl Config {
+    fn new() -> Config {
+        Config {
+            verbose: Option::None,
+            sources: Option::None,
+        }
+    }
+
+    fn new_from(a: Config) -> Config {
+        Config {
+            verbose: a.verbose,
+            sources: a.sources,
+        }
+    }
+}
+
+#[derive(Debug)]
+struct Context {
+    src: String,
+    cnx: Option<ldap3::LdapConn>,
+}
+
+impl Context {
+    fn new() -> Context {
+        Context {
+            src: "".to_string(),
+            cnx: Option::None,
+        }
+    }
+}
+
 fn verbose(s: &str) {
     println!("{}", s);
 }
 
 fn load_config(fname: &str) -> Config {
-    let nul = Config {
-        verbose: Option::None,
-        sources: Option::None,
-    };
-
+    let nul = Config::new();
     let content = fs::read_to_string(fname);
 
     println!("{:?}", content);
@@ -67,12 +105,18 @@ fn load_config(fname: &str) -> Config {
 }
 
 fn main() {
-    let opt = Opt::from_args();
-    let cfg = load_config("src/config.toml");
+    let ctx = Context::new();
+    let opts: Opt = Opt::parse();
+    let mut cfg = load_config("src/config.toml");
 
     verbose("Hello world");
-    println!("{:?}", opt);
+    println!("{:?}", ctx);
+    println!("{:?}", opts);
     println!("{:?}", cfg.sources);
+
+    cfg.verbose = Some(opts.verbose);
+
+    //cfg.list();
 
     verbose("Mode verbeux engagé");
 }
