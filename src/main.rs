@@ -65,6 +65,10 @@ impl Config {
             sources: a.sources,
         }
     }
+
+    fn biip(self: &Config) {
+        println!("Biiip");
+    }
 }
 
 #[derive(Debug)]
@@ -116,7 +120,7 @@ fn main() {
 
     cfg.verbose = Some(opts.verbose);
 
-    //cfg.list();
+    cfg.biip();
 
     verbose("Mode verbeux engagé");
 }
