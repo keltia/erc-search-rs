@@ -1,9 +1,11 @@
+mod config;
+
 use std::fs;
+
+use crate::config::*;
 
 //use toml::Value;
 use clap::{AppSettings, Clap};
-use serde::Deserialize;
-use toml::value::Table;
 
 //use serde_derive::Deserialize;
 
@@ -33,42 +35,6 @@ struct Opt {
     workstation: Option<bool>,
     /// string to search for
     what: String,
-}
-
-#[derive(Debug, Deserialize)]
-struct Source {
-    domain: String,
-    site: String,
-    port: Option<u16>,
-    base: String,
-    filter: Option<String>,
-    attrs: Option<Vec<String>>,
-}
-
-#[derive(Debug, Deserialize)]
-struct Config {
-    verbose: Option<bool>,
-    sources: Option<Table>,
-}
-
-impl Config {
-    fn new() -> Config {
-        Config {
-            verbose: Option::None,
-            sources: Option::None,
-        }
-    }
-
-    fn new_from(a: Config) -> Config {
-        Config {
-            verbose: a.verbose,
-            sources: a.sources,
-        }
-    }
-
-    fn biip(self: &Config) {
-        println!("Biiip");
-    }
 }
 
 #[derive(Debug)]
