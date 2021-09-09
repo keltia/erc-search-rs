@@ -1,7 +1,5 @@
 mod config;
 
-use std::fs;
-
 use crate::config::*;
 
 //use toml::Value;
@@ -54,24 +52,6 @@ impl Context {
 
 fn verbose(s: &str) {
     println!("{}", s);
-}
-
-// That way, we do not panic whatever happens and return an empty Config.
-fn load_config(fname: &str) -> Config {
-    let nul = Config::new();
-    let content = fs::read_to_string(fname);
-
-    println!("{:?}", content);
-
-    let content = match content {
-        Ok(content) => content,
-        Err(_) => return nul,
-    };
-    let cfg = toml::from_str(&content);
-    match cfg {
-        Ok(cfg) => cfg,
-        Err(_) => return nul,
-    }
 }
 
 fn main() {
