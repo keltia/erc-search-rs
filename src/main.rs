@@ -12,7 +12,7 @@ use clap::{AppSettings, Clap};
 #[clap(name = "erc-search", about = "Search internal LDAP/AD.")]
 #[clap(version = "0.1.1")]
 #[clap(setting = AppSettings::ColoredHelp)]
-struct Opt {
+struct Opts {
     /// configuration file
     #[clap(short = 'c', long)]
     config: Option<String>,
@@ -37,36 +37,32 @@ struct Opt {
 
 #[derive(Debug)]
 struct Context {
-    src: String,
-    cnx: Option<ldap3::LdapConn>,
+    pub v: bool,
+    pub src: String,
+    pub cnx: Option<ldap3::LdapConn>,
 }
 
 impl Context {
     fn new() -> Context {
         Context {
+            v: false,
             src: "".to_string(),
             cnx: Option::None,
         }
     }
 }
 
-fn verbose(s: &str) {
-    println!("{}", s);
-}
-
 fn main() {
-    let ctx = Context::new();
-    let opts: Opt = Opt::parse();
-    let mut cfg = load_config("src/config.toml");
+    let mut ctx = Context::new();
 
-    verbose("Hello world");
+    let opts = Opts::parse();
+    let cfg = Config::load("src/config.toml");
+
+    ctx.v = opts.verbose;
+
+    verbose!(ctx, "Hello world");
     println!("{:?}", ctx);
     println!("{:?}", opts);
     println!("{:?}", cfg.sources);
-
-    cfg.verbose = Some(opts.verbose);
-
-    cfg.biip();
-
-    verbose("Mode verbeux engagé");
+    verbose!(ctx, "Mode verbeux engagé");
 }
