@@ -1,11 +1,12 @@
-mod config;
-
-use crate::config::*;
-
 //use toml::Value;
 use clap::{AppSettings, Clap};
 
-//use serde_derive::Deserialize;
+use crate::config::*;
+
+mod config;
+
+#[macro_use]
+mod macros;
 
 /// Help message
 #[derive(Debug, Clap)]
