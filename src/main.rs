@@ -1,12 +1,15 @@
+use anyhow::Result;
 //use toml::Value;
 use clap::{AppSettings, Clap};
 
-use crate::config::*;
-
-mod config;
+use crate::config::Config;
 
 #[macro_use]
 mod macros;
+
+mod config;
+mod ldap;
+mod source;
 
 /// Help message
 #[derive(Debug, Clap)]
@@ -57,7 +60,7 @@ fn main() {
     let mut ctx = Context::new();
 
     let opts = Opts::parse();
-    let cfg = Config::load("src/config.toml");
+    let cfg = Config::load("src/config.toml").unwrap_or_default();
 
     ctx.v = opts.verbose;
 
