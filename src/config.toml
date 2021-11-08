@@ -2,7 +2,7 @@ verbose = false
 
 [sources]
 
-[sources.corporate]
+[sources.people]
 site = "ldap.eurocontrol.fr"
 port = 389
 base = "ou=eurousers,o=eurocontrol,o=ec"
@@ -19,7 +19,7 @@ attrs = [
     "eurocontrolworkstation",
 ]
 
-[sources.ad]
+[sources.machine]
 domain = "sky.corp.eurocontrol.int"
 #site = "sspdc001.sky.corp.eurocontrol.int"
 port = 3268

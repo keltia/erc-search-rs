@@ -1,14 +1,18 @@
-use anyhow::Result;
+use anyhow::{Context, Error, Result};
+use std::path::PathBuf;
 //use toml::Value;
 use clap::{AppSettings, Clap};
 
 use crate::config::Config;
+use crate::search::Search;
+use crate::source::Source;
 
 #[macro_use]
 mod macros;
 
 mod config;
 mod ldap;
+mod search;
 mod source;
 
 /// Help message
@@ -40,27 +44,49 @@ struct Opts {
 }
 
 #[derive(Debug)]
-struct Context {
+struct Ctx {
     pub v: bool,
     pub src: String,
-    pub cnx: Option<ldap3::LdapConn>,
+    pub cfg: Config,
 }
 
-impl Context {
-    fn new() -> Context {
-        Context {
+impl Ctx {
+    pub fn new() -> Ctx {
+        Ctx {
             v: false,
             src: "".to_string(),
-            cnx: Option::None,
+            cfg: Config::new(),
         }
     }
 }
 
 fn main() {
-    let mut ctx = Context::new();
+    let mut ctx = Ctx::new();
 
-    let opts = Opts::parse();
-    let cfg = Config::load("src/config.toml").unwrap_or_default();
+    verbose!(ctx, "Hello world");
+
+    let opts: Opts = Opts::parse();
+
+    // Load default config if nothing is specified
+    let cfg = match opts.config {
+        Some(c) => {
+            let cnf = PathBuf::from(c);
+
+            Config::load(&cnf).with_context(|| format!("No file {:?}", cnf))
+        }
+        None => {
+            let cnf = Config::default_file()?;
+            Config::load(&cnf).with_context(|| format!("No file {:?}", cnf))
+        }
+    };
+
+    // We must have a valid configuration, an error means no default one
+    let cfg = match cfg {
+        Ok(c) => c,
+        Err(e) => panic!("Need a config file! {}", e),
+    };
+
+    println!("{:?}", cfg.sources);
 
     ctx.v = opts.verbose;
 
@@ -69,4 +95,12 @@ fn main() {
     println!("{:?}", opts);
     println!("{:?}", cfg.sources);
     verbose!(ctx, "Mode verbeux engagé");
+
+    // Default search type
+    let s = match opts.workstation {
+        Some(true) => Search::Machine(&opts.what),
+        _ => Search::People(&opts.what),
+    };
+
+    let _res = s.doit(&ctx, &opts.what);
 }

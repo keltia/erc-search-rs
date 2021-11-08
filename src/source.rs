@@ -44,7 +44,7 @@ impl Source {
     }
 
     /// Fetch a source from the configuration.
-    pub fn from(cfg: Config, tag: &str) -> Source {
+    pub fn from(cfg: &Config, tag: &str) -> Self {
         let s = Source::new();
 
         let src = cfg.sources.get(tag);
