@@ -7,9 +7,6 @@ use std::path::PathBuf;
 use anyhow::{Context,Result};
 use clap::crate_name;
 use home::home_dir;
-use serde::Deserialize;
-
-use crate::source::Source;
 
 /// Default configuration filename
 const CONFIG: &str = "config.toml";
@@ -77,6 +74,29 @@ impl Config {
         ]   .iter()
             .collect();
         Ok(def)
+    }
+*/
+    pub fn load(fname: &str) -> anyhow::Result<Config<'cnf>> {
+        let nul = Config::new();
+        let content = fs::read_to_string(fname)?;
+        println!("{:?}", content);
+        let c = toml::from_str(&content)?;
+        Ok(c)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_new(){
+        let a = Config::new();
+        assert_eq!(a, Config {
+            verbose: Some(false),
+            sources: HashMap::new(),
+        });
+        println!("{:?}", a)
     }
 }
 

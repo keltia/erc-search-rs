@@ -3,9 +3,13 @@ use std::path::PathBuf;
 //use toml::Value;
 use clap::{AppSettings, Clap};
 
+<<<<<<< Updated upstream
 use crate::config::Config;
 use crate::search::Search;
 use crate::source::Source;
+=======
+use crate::config::*;
+>>>>>>> Stashed changes
 
 #[macro_use]
 mod macros;
@@ -88,12 +92,17 @@ fn main() {
 
     println!("{:?}", cfg.sources);
 
+    let cfg = match cfg {
+        Ok(cfg) => Ok(cfg),
+        Err(e) => Err(e),
+    };
+
     ctx.v = opts.verbose;
 
     verbose!(ctx, "Hello world");
     println!("{:?}", ctx);
     println!("{:?}", opts);
-    println!("{:?}", cfg.sources);
+    println!("{:?}", cfg);
     verbose!(ctx, "Mode verbeux engagé");
 
     // Default search type
