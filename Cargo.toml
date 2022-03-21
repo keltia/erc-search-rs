@@ -12,7 +12,7 @@ documentation = "https://docs.rs/erc-search"
 
 [dependencies]
 anyhow = "1.0.44"
-clap = "3.0.0-beta.5"
+clap = { version = "3.1.6", features = ["derive", "cargo"] }
 ldap3 = "0.9"
 toml = "0.5.8"
 home = "0.5.3"
