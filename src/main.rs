@@ -58,22 +58,14 @@ impl Ctx {
     }
 }
 
-fn main() {
-    let mut ctx = Ctx::new();
-
-    verbose!(ctx, "Hello world");
-
-    let opts: Opts = Opts::parse();
-
+fn get_config(opts: &Opts) -> Config {
     // Load default config if nothing is specified
-    let cfg = match opts.config {
+    let cfg = match &opts.config {
         Some(c) => {
-            let cnf = PathBuf::from(c);
-
-            Config::load(&cnf).with_context(|| format!("No file {:?}", cnf))
+            Config::load(&c).with_context(|| format!("No file {:?}", c))
         }
         None => {
-            let cnf = Config::default_file()?;
+            let cnf = Config::default_file().unwrap();
             Config::load(&cnf).with_context(|| format!("No file {:?}", cnf))
         }
     };
@@ -83,13 +75,20 @@ fn main() {
         Ok(c) => c,
         Err(e) => panic!("Need a config file! {}", e),
     };
+    cfg
+}
+
+fn main() {
+    let mut ctx = Ctx::new();
+
+    verbose!(ctx, "Hello world");
+
+    let opts: Opts = Opts::parse();
+
+    // Load default config if nothing is specified
+    let cfg = get_config(&opts);
 
     println!("{:?}", cfg.sources);
-
-    let cfg = match cfg {
-        Ok(cfg) => Ok(cfg),
-        Err(e) => Err(e),
-    };
 
     ctx.v = opts.verbose;
 
