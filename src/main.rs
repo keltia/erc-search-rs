@@ -22,7 +22,7 @@ mod source;
 struct Opts {
     /// configuration file
     #[clap(short = 'c', long)]
-    config: Option<String>,
+    config: Option<PathBuf>,
     /// debug mode
     #[clap(short = 'D', long = "debug")]
     debug: Option<bool>,
