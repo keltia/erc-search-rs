@@ -76,17 +76,9 @@ impl Config {
             homedir,
             PathBuf::from(crate_name!()),
             PathBuf::from(CONFIG),
-        ]   .iter()
+        ].iter()
             .collect();
         Ok(def)
-    }
-*/
-    pub fn load(fname: &str) -> anyhow::Result<Config<'cnf>> {
-        let nul = Config::new();
-        let content = fs::read_to_string(fname)?;
-        println!("{:?}", content);
-        let c = toml::from_str(&content)?;
-        Ok(c)
     }
 }
 
