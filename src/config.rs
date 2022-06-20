@@ -98,11 +98,6 @@ mod tests {
         });
         println!("{:?}", a)
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
 
     #[test]
     fn test_new() {
