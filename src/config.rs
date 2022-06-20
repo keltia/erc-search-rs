@@ -69,7 +69,7 @@ impl Config {
 
     /// Returns the path of the default config file
     #[cfg(windows)]
-    pub fn default_file() -> anyhow::Result<PathBuf> {
+    pub fn default_file() -> Result<PathBuf> {
         let homedir = home_dir().unwrap();
 
         let def: PathBuf = [
