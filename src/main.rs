@@ -16,10 +16,9 @@ mod ldap;
 mod source;
 
 /// Help message
-#[derive(Debug, Clap)]
+#[derive(Parser, Debug)]
 #[clap(name = "erc-search", about = "Search internal LDAP/AD.")]
-#[clap(version = "0.1.1")]
-#[clap(setting = AppSettings::ColoredHelp)]
+#[clap(version = crate_version ! (), author = crate_authors ! ())]
 struct Opts {
     /// configuration file
     #[clap(short = 'c', long)]
