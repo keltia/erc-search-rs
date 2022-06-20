@@ -1,15 +1,12 @@
-use anyhow::{Context, Error, Result};
 use std::path::PathBuf;
-//use toml::Value;
-use clap::{AppSettings, Clap};
 
-<<<<<<< Updated upstream
+use anyhow::{Context, Error, Result};
+//use toml::Value;
+use clap::{crate_authors, crate_version, Parser};
+use serde::Deserialize;
+
 use crate::config::Config;
-use crate::search::Search;
 use crate::source::Source;
-=======
-use crate::config::*;
->>>>>>> Stashed changes
 
 #[macro_use]
 mod macros;
