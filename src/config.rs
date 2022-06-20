@@ -20,7 +20,9 @@ const BASEDIR: &str = ".config";
 /// Main struct holding configurations
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct Config {
+    /// Do we want verbose by default?
     pub verbose: Option<bool>,
+    /// Different sources to search into
     pub sources: HashMap<String, Source>,
 }
 
