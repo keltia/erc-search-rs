@@ -42,7 +42,7 @@ struct Opts {
     what: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 struct Ctx {
     pub v: bool,
     pub src: String,
@@ -52,9 +52,8 @@ struct Ctx {
 impl Ctx {
     pub fn new() -> Ctx {
         Ctx {
-            v: false,
-            src: "".to_string(),
             cfg: Config::new(),
+            ..Default::default()
         }
     }
 }
