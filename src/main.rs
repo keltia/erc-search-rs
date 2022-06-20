@@ -1,8 +1,12 @@
-use anyhow::Result;
+use std::path::PathBuf;
+
+use anyhow::{Context, Error, Result};
 //use toml::Value;
-use clap::{AppSettings, Clap};
+use clap::{crate_authors, crate_version, Parser};
+use serde::Deserialize;
 
 use crate::config::Config;
+use crate::source::Source;
 
 #[macro_use]
 mod macros;
@@ -12,14 +16,13 @@ mod ldap;
 mod source;
 
 /// Help message
-#[derive(Debug, Clap)]
+#[derive(Parser, Debug)]
 #[clap(name = "erc-search", about = "Search internal LDAP/AD.")]
-#[clap(version = "0.1.1")]
-#[clap(setting = AppSettings::ColoredHelp)]
+#[clap(version = crate_version ! (), author = crate_authors ! ())]
 struct Opts {
     /// configuration file
     #[clap(short = 'c', long)]
-    config: Option<String>,
+    config: Option<PathBuf>,
     /// debug mode
     #[clap(short = 'D', long = "debug")]
     debug: Option<bool>,
@@ -39,34 +42,67 @@ struct Opts {
     what: String,
 }
 
-#[derive(Debug)]
-struct Context {
+#[derive(Debug, Default)]
+struct Ctx {
     pub v: bool,
     pub src: String,
-    pub cnx: Option<ldap3::LdapConn>,
+    pub cfg: Config,
 }
 
-impl Context {
-    fn new() -> Context {
-        Context {
-            v: false,
-            src: "".to_string(),
-            cnx: Option::None,
+impl Ctx {
+    pub fn new() -> Ctx {
+        Ctx {
+            cfg: Config::new(),
+            ..Default::default()
         }
     }
 }
 
-fn main() {
-    let mut ctx = Context::new();
+fn get_config(opts: &Opts) -> Config {
+    // Load default config if nothing is specified
+    let cfg = match &opts.config {
+        Some(c) => {
+            Config::load(&c).with_context(|| format!("No file {:?}", c))
+        }
+        None => {
+            let cnf = Config::default_file().unwrap();
+            Config::load(&cnf).with_context(|| format!("No file {:?}", cnf))
+        }
+    };
 
-    let opts = Opts::parse();
-    let cfg = Config::load("src/config.toml").unwrap_or_default();
+    // We must have a valid configuration, an error means no default one
+    let cfg = match cfg {
+        Ok(c) => c,
+        Err(e) => panic!("Need a config file! {}", e),
+    };
+    cfg
+}
+
+fn main() {
+    let mut ctx = Ctx::new();
+
+    verbose!(ctx, "Hello world");
+
+    let opts: Opts = Opts::parse();
+
+    // Load default config if nothing is specified
+    let cfg = get_config(&opts);
+
+    println!("{:?}", cfg.sources);
 
     ctx.v = opts.verbose;
 
     verbose!(ctx, "Hello world");
     println!("{:?}", ctx);
     println!("{:?}", opts);
-    println!("{:?}", cfg.sources);
+    println!("{:?}", cfg);
     verbose!(ctx, "Mode verbeux engagé");
+
+    // Default search type
+    let s = match opts.workstation {
+        Some(true) => Search::Machine(&opts.what),
+        _ => Search::People(&opts.what),
+    };
+
+    let _res = s.doit(&ctx, &opts.what);
 }

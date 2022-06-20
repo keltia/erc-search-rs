@@ -1,14 +1,15 @@
 //! Everything related to a source of information
 
+use anyhow::{anyhow, bail, Result};
 use ldap3::{Ldap, LdapConn};
 use serde::Deserialize;
 
 use crate::config::Config;
 
 /// Describe a source of information (aka LDAP-compatible server)
-#[derive(Clone, Debug, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 pub struct Source {
-    /// DNS domaine used to search server adresses through SRV RRs
+    /// DNS domain used to search server addresses through SRV RRs
     domain: String,
     /// Server
     site: String,
@@ -22,47 +23,30 @@ pub struct Source {
     attrs: Option<Vec<String>>,
 }
 
-/// Yield an empty source
-impl Default for Source {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 /// Source methods
 impl Source {
     /// Creates an empty source.
     pub fn new() -> Source {
         Source {
-            domain: "".to_string(),
-            site: "".to_string(),
-            port: Option::None,
-            base: "".to_string(),
-            filter: Option::None,
-            attrs: Option::None,
+            ..Default::default()
         }
     }
 
     /// Fetch a source from the configuration.
-    pub fn from(cfg: Config, tag: &str) -> Source {
+    pub fn from(cfg: &Config, tag: &str) -> Result<Self> {
         let s = Source::new();
 
-        let src = cfg.sources.get(tag);
-        return match src {
-            Some(src) => src.clone(),
-            None => s,
+        let src = match cfg.sources.get(tag) {
+            Some(s) => s.clone(),
+            _ => bail!("Config not found"),
         };
+        Ok(s)
     }
 
     /// Does the connection to the LDAP server
-    pub fn connect(self: &Source) -> Result<ldap3::LdapConn, ldap3::LdapError> {
+    pub fn connect(self: &Source) -> Result<LdapConn> {
         let url = format!("ldap://{}:{:?}/", self.site, self.port);
-
-        let mut ldap = LdapConn::new(&url);
-        match ldap {
-            Ok(ldap) => Ok(ldap),
-            Err(e) => Err(e),
-        }
+        Ok(LdapConn::new(&url)?)
     }
 }
 
