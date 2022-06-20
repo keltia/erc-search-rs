@@ -13,7 +13,6 @@ mod macros;
 
 mod config;
 mod ldap;
-mod search;
 mod source;
 
 /// Help message
