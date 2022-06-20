@@ -4,9 +4,12 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 
-use anyhow::{Context,Result};
+use anyhow::{Context, Result};
 use clap::crate_name;
 use home::home_dir;
+use serde::Deserialize;
+
+use crate::source::Source;
 
 /// Default configuration filename
 const CONFIG: &str = "config.toml";
