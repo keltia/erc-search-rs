@@ -33,25 +33,20 @@ impl Source {
     }
 
     /// Fetch a source from the configuration.
-    pub fn from(cfg: &Config, tag: &str) -> Self {
+    pub fn from(cfg: &Config, tag: &str) -> Result<Self> {
         let s = Source::new();
 
-        let src = cfg.sources.get(tag);
-        return match src {
-            Some(src) => src.clone(),
-            None => s,
+        let src = match cfg.sources.get(tag) {
+            Some(s) => s.clone(),
+            _ => bail!("Config not found"),
         };
+        Ok(s)
     }
 
     /// Does the connection to the LDAP server
-    pub fn connect(self: &Source) -> Result<ldap3::LdapConn, ldap3::LdapError> {
+    pub fn connect(self: &Source) -> Result<LdapConn> {
         let url = format!("ldap://{}:{:?}/", self.site, self.port);
-
-        let mut ldap = LdapConn::new(&url);
-        match ldap {
-            Ok(ldap) => Ok(ldap),
-            Err(e) => Err(e),
-        }
+        Ok(LdapConn::new(&url)?)
     }
 }
 
