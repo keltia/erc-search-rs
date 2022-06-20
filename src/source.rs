@@ -9,7 +9,7 @@ use crate::config::Config;
 /// Describe a source of information (aka LDAP-compatible server)
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 pub struct Source {
-    /// DNS domaine used to search server adresses through SRV RRs
+    /// DNS domain used to search server addresses through SRV RRs
     domain: String,
     /// Server
     site: String,
