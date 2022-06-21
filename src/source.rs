@@ -34,17 +34,15 @@ impl Source {
 
     /// Fetch a source from the configuration.
     pub fn from(cfg: &Config, tag: &str) -> Result<Self> {
-        let s = Source::new();
-
         let src = match cfg.sources.get(tag) {
             Some(s) => s.clone(),
             _ => bail!("Config not found"),
         };
-        Ok(s)
+        Ok(src)
     }
 
     /// Does the connection to the LDAP server
-    pub fn connect(self: &Source) -> Result<LdapConn> {
+    pub fn connect(&self) -> Result<LdapConn> {
         let url = format!("ldap://{}:{:?}/", self.site, self.port);
         Ok(LdapConn::new(&url)?)
     }
@@ -52,21 +50,37 @@ impl Source {
 
 #[cfg(test)]
 mod tests {
+    use std::path::PathBuf;
+
     use super::*;
 
     #[test]
     fn test_new() {
         let s = Source::new();
-        assert!(
+        assert_eq!(
             Source {
                 domain: "".to_string(),
                 site: "".to_string(),
-                port: Option::None,
+                port: None,
                 base: "".to_string(),
-                filter: Option::None,
-                attrs: Option::None,
+                filter: None,
+                attrs: None,
             },
             s
         );
+    }
+
+    #[test]
+    fn test_source_from() {
+        let cn = PathBuf::from("bin/erc-search/config.toml");
+        let cfg = Config::load(&cn);
+        assert!(cfg.is_ok());
+
+        let cfg = cfg.unwrap();
+        let s = Source::from(&cfg, "people");
+        assert!(s.is_ok());
+
+        let s = s.unwrap();
+        assert_eq!("ldap.eurocontrol.fr", s.site.as_str());
     }
 }
