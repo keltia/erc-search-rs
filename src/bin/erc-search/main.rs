@@ -1,19 +1,16 @@
 use std::path::PathBuf;
 
-use anyhow::{Context, Error, Result};
-//use toml::Value;
+use anyhow::{Context, Result};
 use clap::{crate_authors, crate_version, Parser};
-use serde::Deserialize;
+use ldap3::{LdapConn, LdapError, LdapResult};
 
-use crate::config::Config;
-use crate::source::Source;
+use erc_search::config::Config;
+use erc_search::display::display_results;
+use erc_search::display_results;
+use erc_search::session::{Search, Session};
 
 #[macro_use]
 mod macros;
-
-mod config;
-mod ldap;
-mod source;
 
 /// Help message
 #[derive(Parser, Debug)]
