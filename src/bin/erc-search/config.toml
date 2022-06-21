@@ -1,6 +1,7 @@
 verbose = false
 
 [sources.people]
+domain = "eurocontrol.fr"
 site = "ldap.eurocontrol.fr"
 port = 389
 base = "ou=eurousers,o=eurocontrol,o=ec"
@@ -19,7 +20,7 @@ attrs = [
 
 [sources.machine]
 domain = "sky.corp.eurocontrol.int"
-#site = "sspdc001.sky.corp.eurocontrol.int"
+site = "sspdc001.sky.corp.eurocontrol.int"
 port = 3268
 base = "DC=sky,DC=corp,DC=eurocontrol,DC=int"
 filter = "(%s=*%s*)"
