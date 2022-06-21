@@ -1,7 +1,5 @@
 verbose = false
 
-[sources]
-
 [sources.people]
 site = "ldap.eurocontrol.fr"
 port = 389
