@@ -10,17 +10,17 @@ use crate::config::Config;
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 pub struct Source {
     /// DNS domain used to search server addresses through SRV RRs
-    domain: String,
+    pub domain: String,
     /// Server
-    site: String,
+    pub site: String,
     /// LDAP port (389, 636)
-    port: Option<u16>,
+    pub port: Option<u16>,
     /// LDAP base
-    base: String,
+    pub base: String,
     /// Filter for LDAP queries
-    filter: Option<String>,
+    pub filter: Option<String>,
     /// List of attributes we are interested in
-    attrs: Option<Vec<String>>,
+    pub attrs: Option<Vec<String>>,
 }
 
 /// Source methods
