@@ -34,25 +34,9 @@ struct Opts {
     version: Option<bool>,
     /// Search for workstation
     #[clap(short, long = "workstation")]
-    workstation: Option<bool>,
+    workstation: bool,
     /// string to search for
     what: String,
-}
-
-#[derive(Debug, Default)]
-struct Ctx {
-    pub v: bool,
-    pub src: String,
-    pub cfg: Config,
-}
-
-impl Ctx {
-    pub fn new() -> Ctx {
-        Ctx {
-            cfg: Config::new(),
-            ..Default::default()
-        }
-    }
 }
 
 fn get_config(opts: &Opts) -> Config {
@@ -75,31 +59,22 @@ fn get_config(opts: &Opts) -> Config {
     cfg
 }
 
-fn main() {
-    let mut ctx = Ctx::new();
 
-    verbose!(ctx, "Hello world");
-
+fn main() -> Result<()> {
     let opts: Opts = Opts::parse();
 
     // Load default config if nothing is specified
     let cfg = get_config(&opts);
 
-    println!("{:?}", cfg.sources);
-
-    ctx.v = opts.verbose;
-
-    verbose!(ctx, "Hello world");
-    println!("{:?}", ctx);
     println!("{:?}", opts);
     println!("{:?}", cfg);
-    verbose!(ctx, "Mode verbeux engagé");
+    verbose!(cfg, "Verbose mode.");
+    println!("{:?}", cfg.sources);
 
-    // Default search type
-    let s = match opts.workstation {
-        Some(true) => Search::Machine(&opts.what),
-        _ => Search::People(&opts.what),
-    };
+    // Search data
+    let what = opts.what;
 
-    let _res = s.doit(&ctx, &opts.what);
+    let res = Session::new(&cfg)?.search(what)?;
+
+    Ok(display_results(res))
 }
