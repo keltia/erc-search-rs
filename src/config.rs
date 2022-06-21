@@ -9,6 +9,7 @@ use clap::crate_name;
 use home::home_dir;
 use serde::Deserialize;
 
+use crate::session::Search;
 use crate::source::Source;
 
 /// Default configuration filename
@@ -18,10 +19,12 @@ const CONFIG: &str = "config.toml";
 const BASEDIR: &str = ".config";
 
 /// Main struct holding configurations
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct Config {
+    /// Searching for what type of data?
+    pub sfor: Search,
     /// Do we want verbose by default?
-    pub verbose: Option<bool>,
+    pub verbose: bool,
     /// Different sources to search into
     pub sources: HashMap<String, Source>,
 }
@@ -38,18 +41,17 @@ impl Config {
     /// Returns an empty struct
     pub fn new() -> Config {
         Config {
-            verbose: Some(false),
+            sfor: Search::Person,
+            verbose: false,
             sources: HashMap::new(),
         }
     }
 
     /// Load the specified config file
-    pub fn load(fname: &PathBuf) -> anyhow::Result<Config> {
+    pub fn load(fname: &PathBuf) -> Result<Config> {
         let content = fs::read_to_string(fname)?;
 
-        println!("{:?}", content);
-
-        let s: Config = toml::from_str(&content).unwrap_or_default();
+        let s: Config = toml::from_str(&content)?;
         Ok(s)
     }
 
@@ -90,21 +92,21 @@ mod tests {
     fn test_new(){
         let a = Config::new();
         assert_eq!(a, Config {
-            verbose: Some(false),
+            sfor: Search::Person,
+            verbose: false,
             sources: HashMap::new(),
         });
         println!("{:?}", a)
     }
 
     #[test]
-    fn test_new() {
-        let a = Config::new();
-        assert_eq!(
-            Config {
-                verbose: Some(false),
-                sources: HashMap::new(),
-            },
-            a
-        )
+    fn test_config_load() {
+        let cn = PathBuf::from("config.toml");
+        let cfg = Config::load(&cn);
+        assert!(cfg.is_ok());
+
+        let cfg = cfg.unwrap();
+        assert!(!cfg.verbose);
+        assert!(!cfg.sources.is_empty());
     }
 }
