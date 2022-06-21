@@ -52,10 +52,13 @@ fn get_config(opts: &Opts) -> Config {
     };
 
     // We must have a valid configuration, an error means no default one
-    let cfg = match cfg {
+    let mut cfg = match cfg {
         Ok(c) => c,
         Err(e) => panic!("Need a config file! {}", e),
     };
+    if opts.workstation {
+        cfg.sfor = Search::Machine;
+    }
     cfg
 }
 
